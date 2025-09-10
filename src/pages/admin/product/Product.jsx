@@ -103,20 +103,7 @@ removeproduct(id,{
 
 
 
-    // try {
-    //   setIsDeleting(true);
-    //   await API.delete(`/products/remove${deleteId}`);
 
-    
-    //   queryClient.invalidateQueries(["products"]);
-
-    //   console.log("Deleted product:", deleteId);
-    // } catch (err) {
-    //   console.error("Delete failed:", err);
-    // } finally {
-    //   setIsDeleting(false);
-    //   setDeleteId(null);
-    // }
   };
 
 
@@ -147,77 +134,7 @@ removeproduct(id,{
         Product List
       </Typography>
 
-      {/* {!isLoading ? (
-        <TableContainer component={Paper} elevation={3}>
-          <Table>
-            <TableHead sx={{ bgcolor: "#f0f0f0" }}>
-              <TableRow>
-                <TableCell>
-                  <strong>ID</strong>
-                </TableCell>
-                <TableCell>
-                  <strong>Title</strong>
-                </TableCell>
-                <TableCell>
-                  <strong>Description</strong>
-                </TableCell>
-                <TableCell>
-                  <strong>Image</strong>
-                </TableCell>
-                <TableCell>
-                  <strong>Actions</strong>
-                </TableCell>
-              </TableRow>
-            </TableHead>
-
-            <TableBody>
-              {productList?.map((value) => (
-                <TableRow key={value.id}>
-                  <TableCell>{value.id}</TableCell>
-                  <TableCell>{value.title}</TableCell>
-                  <TableCell>{value.description}</TableCell>
-                  <TableCell>
-                    {value.image && (
-                      <img
-                        src={value.image}
-                        alt={value.title}
-                        width={50}
-                        height={50}
-                        style={{ borderRadius: "50%" }}
-                      />
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    <Button onClick={() => navigate(`/admin/edit/${value.id}`)}>
-                      <EditIcon />
-                    </Button>
-                    <Button
-                      onClick={() => {
-                        setOpenDialog(true);
-                        setDeleteId(value.id);
-                      }}
-                    >
-                      <DeleteIcon />
-                    </Button>
-                    <Button
-                      onClick={() => {
-                        setOpenViewDialog(true);
-                        setViewDetails(value);
-                      }}
-                    >
-                      <RemoveRedEye />
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      ) : (
-        <Box display="flex" justifyContent="center" mt={4}>
-          <CircularProgress />
-        </Box>
-      )} */}
+     
 
 
 

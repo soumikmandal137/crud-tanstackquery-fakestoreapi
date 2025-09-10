@@ -18,9 +18,11 @@ export const useAddproduct = () => {
   return useMutation({
     mutationFn: async (data) => {
       const formdata = new FormData();
-      formdata.append("title", data.title);
-      formdata.append("description", data.description);
-      formdata.append("image", data.image);
+   formData.append ("id",id)
+      formData.append("title", data.title);
+      formData.append("description", data.description);
+       formData.append("description", data.price);
+        formData.append("description", data.category);
       const response = await API.post("/produts", formdata, {
         headers: {
           "Contain-Type": "multipart/formdata",
@@ -31,12 +33,13 @@ export const useAddproduct = () => {
   });
 };
 
-export const useproductbyid = (id) => {
+export const productbyid = (id) => {
   return useQuery({
-    querykey: ["useproductbyid", id],
+    queryKey: ["productbyid", id],
     queryFn: async () => {
       const response = await API.get(`/products/${id}`);
-      return response.data;
+
+      return response?.data;
     },
 
     enabled: !!id,

@@ -14,7 +14,10 @@ import { toast } from 'sonner';
 
 const schema = yup.object().shape({
   title: yup.string().required("Title is required"),
+  price: yup.string().required("price is required"),
   description: yup.string().required("Description is required"),
+  category: yup.string().required("category is required"),
+  
 });
 
 
@@ -39,30 +42,14 @@ const AddProduct = () => {
     resolver: yupResolver(schema),
     defaultValues: {
       title: "",
+      price:"",
       description: "",
+      category:"",
       image: "",
     },
   });
 
-    const onSubmit = async (formData) => {
-    setLoading(true);
-    try {
-      const mutationFn = isEditMode ? updateProduct: createProduct
-      const payload = isEditMode ? { id, data:formData } : formData;
 
-      const response = await mutationFn.mutateAsync(payload);
-      if (response?.status === 200) {        
-        toast(response?.message);
-        reset();
-        setPhotoURL("");
-        setTimeout(() => {
-          navigate("/admin/list");
-        }, 1000);
-      }
-    } catch (error) {
-      toast(error?.response?.data?.message);
-    } 
-  };
 
     const { data, isLoding } = productbyid(id);
   console.log("data==========", data);
@@ -84,6 +71,97 @@ const AddProduct = () => {
     }
   }, [id, data, reset]);
 
+
+
+
+
+
+
+
+  const handlePhotoChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setPhoto(file);
+      setPhotoURL(URL.createObjectURL(file));
+    }
+  };
+
+
+  const onSubmit = async (data) => {
+    setLoading(true);
+    try {
+    
+
+if(id){
+  const formData = new FormData();
+  formData.append ("id",id)
+      formData.append("title", data.title);
+      formData.append("description", data.description);
+       formData.append("description", data.price);
+        formData.append("description", data.category);
+      if (photo) {
+        formData.append("image", photo);
+      }
+  const response = await API.post("/product/update", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+   console.log("response", response);
+      if (response?.status === 200) {
+        toast(response?.data?.message);
+        reset();
+        setPhoto(null);
+        setPhotoURL("");
+        setTimeout(() => {
+          navigate("/admin/main/userlist");
+        }, 2000);
+      } else {
+        toast(response?.data?.message);
+      }
+}else{
+  const formData = new FormData();
+      formData.append("title", data.title);
+      formData.append("description", data.description);
+      if (photo) {
+        formData.append("image", photo);
+      }
+
+
+      const response = await API.post("/products", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+         console.log("response", response);
+      if (response?.status === 200) {
+        toast(response?.data?.message);
+        reset();
+        setPhoto(null);
+        setPhotoURL("");
+        setTimeout(() => {
+          navigate("/admin/list");
+        }, 2000);
+      } else {
+        toast(response?.data?.message);
+      }
+    }
+   
+    } catch (error) {
+      toast(error?.response?.data?.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
+
+
+
+
+
+
+
   return (
  
     <Box component="form" onSubmit={handleSubmit(onSubmit)} sx={{ p: 4 }}>
@@ -103,12 +181,16 @@ const AddProduct = () => {
     <TextField
           label="Price"
           fullWidth
-          {...register("Price")}
+          {...register("price")}
           error={!!errors.price}
           helperText={errors.price?.message}
         />
 
-        <TextField
+  </Box>
+
+        <Box sx={{ display: "flex", gap: 4,marginTop:4 }}>
+
+   <TextField
           label="Description"
           fullWidth
           {...register("description")}
@@ -124,7 +206,11 @@ const AddProduct = () => {
           helperText={errors.category?.message}
         />
 
-      </Box>
+        </Box>
+
+     
+
+    
 
       <Box sx={{ display: "flex", alignItems: "center", mt: 4 }}>
         <Avatar
