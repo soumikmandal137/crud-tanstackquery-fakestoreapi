@@ -3,7 +3,6 @@ import { Avatar, Box, Button, TextField, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
-import { productbyid } from "../../../hook/react-query/useAuth";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   useAddproduct,
@@ -45,23 +44,12 @@ const Adduser = () => {
     },
   });
 
-  const { data, isLoding } = productbyid(id);
-  console.log("data==========", data);
-
-  useEffect(() => {
-    if (id && data) {
-      const { username, email, password } = data?.data || {};
-      reset({ username, email, password });
-    }
-  }, [id, data, reset]);
-
-  const handlePhotoChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setPhoto(file);
-      setPhotoURL(URL.createObjectURL(file));
-    }
-  };
+  // useEffect(() => {
+  //   if (id && data) {
+  //     const { username, email, password } = data?.data || {};
+  //     reset({ username, email, password });
+  //   }
+  // }, [id, data, reset]);
 
   const onSubmit = async (data) => {
     setLoading(true);

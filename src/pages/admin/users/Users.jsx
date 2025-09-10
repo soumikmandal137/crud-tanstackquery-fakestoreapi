@@ -100,10 +100,6 @@ removeproduct(id,{
   }
 })
 
-
-
-
-
   };
 
 

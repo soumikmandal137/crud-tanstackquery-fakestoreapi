@@ -18,17 +18,3 @@ export const useLogin = ()=>{
         }
     })
 };
-
-
-export const productbyid = (id) => {
-  return useQuery({
-    queryKey: ["productbyid", id],
-    queryFn: async () => {
-      const response = await API.get(`/product/detail/${id}`);
-
-      return response?.data;
-    },
-
-    enabled: !!id,
-  });
-};
