@@ -4,11 +4,9 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { useNavigate, useParams } from "react-router-dom";
-import {
-  useAddproduct,
-  useUpdateProduct,
-} from "../../../hook/react-query/useProduct";
 import { toast } from "sonner";
+import { useAddusers, useRemoveusers, usersbyid, useUpdateusers } from "../../../hook/react-query/useuser";
+
 
 const schema = yup.object().shape({
   username: yup.string().required("Title is required"),
@@ -24,8 +22,10 @@ const Adduser = () => {
   const { id } = useParams();
   const [loading, setLoading] = useState(false);
   const [photoURL, setPhotoURL] = useState("");
-  const createProduct = useAddproduct();
-  const updateProduct = useUpdateProduct();
+   const mutationAddusers = useAddusers();
+   const mutationUpdateusers = useUpdateusers();
+   const mutationRemoveusers =useRemoveusers();
+ 
 
   const {
     register,
@@ -40,74 +40,55 @@ const Adduser = () => {
       username: "",
       email: "",
       password: "",
-      category: "",
+
     },
   });
 
-  // useEffect(() => {
-  //   if (id && data) {
-  //     const { username, email, password } = data?.data || {};
-  //     reset({ username, email, password });
-  //   }
-  // }, [id, data, reset]);
-
-  const onSubmit = async (data) => {
-    setLoading(true);
-    try {
-      if (id) {
-        const formData = new FormData();
-        formData.append("id", id);
-        formData.append("username", data.username);
-        formData.append("email", data.email);
-        // if (photo) {
-        //   formData.append("image", photo);
-        // }
-        const response = await API.post("/product/update", formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        });
-        console.log("response", response);
-        if (response?.status === 200) {
-          toast(response?.data?.message);
-          reset();
-          setPhoto(null);
-          setPhotoURL("");
-          setTimeout(() => {
-            navigate("/admin/main/userlist");
-          }, 2000);
-        } else {
-          toast(response?.data?.message);
-        }
-      } else {
-        const formData = new FormData();
-        formData.append("username", data.username);
-        formData.append("email", data.email);
-
-        // const response = await API.post("/products", formData, {
-        //   headers: {
-        //     "Content-Type": "multipart/form-data",
-        //   },
-        // });
-        console.log("response", response);
-        if (response?.status === 200) {
-          toast(response?.data?.message);
-          reset();
-          setPhoto(null);
-          setPhotoURL("");
-          setTimeout(() => {
-            navigate("/admin/main/userlist");
-          }, 2000);
-        } else {
-          toast(response?.data?.message);
-        }
-      }
-    } catch (error) {
-      toast(error?.response?.data?.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+ const { data, isLoding } = usersbyid(id);
+   console.log("data==========", data);
+ 
+   useEffect(() => {
+     if (id && data) {
+       const { username,email,password } = data?.data || {};
+       reset({ username,email,password });
+     }
+   }, [id, data, reset]);
+ 
+   const handlePhotoChange = (e) => {
+     const file = e.target.files[0];
+     if (file) {
+       setPhoto(file);
+       setPhotoURL(URL.createObjectURL(file));
+     }
+   };
+ 
+   const onSubmit = async (data, mode) => {
+   setLoading(true);
+   try {
+     if (mode === "edit" && id) {
+       console.log("edit mode");
+       const response = await mutationUpdateusers.mutateAsync({ id, data });
+       if (response?.status === 200) {
+         toast("users Updated Successfully");
+         reset();
+         navigate("/admin/main/userlist");
+       }
+     } else {
+       console.log("create mode");
+       const response = await mutationAddusers.mutateAsync(data);
+       if (response?.status === 201) {
+         toast("users updated Successfully");
+         reset();
+         navigate("/admin/main/userlist");
+       }
+     }
+   } catch (error) {
+     // toast(error?.response?.data?.message);
+     console.error(error);
+   } finally {
+     setLoading(false);
+   }
+ };
 
   return (
     <Box component="form" onSubmit={handleSubmit(onSubmit)} sx={{ p: 4 }}>

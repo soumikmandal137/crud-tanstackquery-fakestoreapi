@@ -7,6 +7,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import {
   productbyid,
   useAddproduct,
+  useRemoveproduct,
   useUpdateProduct,
 } from "../../../hook/react-query/useProduct";
 import { toast } from "sonner";
@@ -24,6 +25,7 @@ const AddProduct = () => {
   const [loading, setLoading] = useState(false);
   const mutationAddProduct = useAddproduct();
   const mutationUpdateProduct = useUpdateProduct();
+  const mutationRemoveProduct =useRemoveproduct();
 
   const {
     register,
@@ -61,31 +63,34 @@ const AddProduct = () => {
     }
   };
 
-  const onSubmit = async (data) => {
-    setLoading(true);
-    try {
-      if (id) {
-        console.log("edit mode");
-        const response = await mutationUpdateProduct.mutateAsync({id, data});
-        if (response?.status === 200) {
-          toast("Product Updated Successfully");
-          reset();
-          navigate("/admin/main/productlist");
-        }
-      } else {
-        const response = await mutationAddProduct.mutateAsync(data);
-        if (response?.status === 201) {
-          toast("Product Created Successfully");
-          reset();
-          navigate("/admin/main/productlist");
-        }
+  const onSubmit = async (data, mode) => {
+  setLoading(true);
+  try {
+    if (mode === "edit" && id) {
+      console.log("edit mode");
+      const response = await mutationUpdateProduct.mutateAsync({ id, data });
+      if (response?.status === 200) {
+        toast("Product Updated Successfully");
+        reset();
+        navigate("/admin/main/productlist");
       }
-    } catch (error) {
-      // toast(error?.response?.data?.message);
-    } finally {
-      setLoading(false);
+    } else {
+      console.log("create mode");
+      const response = await mutationAddProduct.mutateAsync(data);
+      if (response?.status === 201) {
+        toast("Product update Successfully");
+        reset();
+        navigate("/admin/main/productlist");
+      }
     }
-  };
+  } catch (error) {
+    // toast(error?.response?.data?.message);
+    console.error(error);
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <Box component="form" onSubmit={handleSubmit(onSubmit)} sx={{ p: 4 }}>
